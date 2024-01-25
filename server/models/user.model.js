@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 const userSchema=new Schema({
-    name:{
+    fullName:{
         type:String,
         required:[true,"Name is required"],
         maxLength:[50,"The length of name must be less than 50 characters"],

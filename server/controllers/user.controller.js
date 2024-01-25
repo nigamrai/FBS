@@ -7,7 +7,7 @@ import fs from 'fs/promises';
 const userController={
     async register(req,res,next){
        const registerSchema=Joi.object({
-        name:Joi.string().min(5).max(50).required(),
+        fullName:Joi.string().min(5).max(50).required(),
         email:Joi.string().trim().email().required(),
         password:Joi.string().pattern(new RegExp(/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/)).required(),
         confirmPassword:Joi.ref('password')
@@ -16,7 +16,7 @@ const userController={
        if(error){
         return next(error);
        }
-       const{name,email,password,confirmPassword}=req.body;
+       const{fullName,email,password,confirmPassword}=req.body;
        try{
         const exist=await User.exists({email});
         if(exist){
@@ -27,7 +27,7 @@ const userController={
        }
        const hashedPassword=await bcrypt.hash(password,10);
        const user=await User.create({
-        name,
+        fullName,
         email,
         password:hashedPassword,
         avatar:{

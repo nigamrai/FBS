@@ -7,7 +7,7 @@ const errorHandler=(err,req,res,next)=>{
         originalError:err.message
     }
     if(err instanceof ValidationError){
-        statusCode=422,
+        statusCode=422;
         data={
             message:err.message
         }

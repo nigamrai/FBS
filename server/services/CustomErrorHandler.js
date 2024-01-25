@@ -7,8 +7,8 @@ class CustomErrorHandler extends Error{
     static alreadyExists(message){
         return new CustomErrorHandler(409,message);
     }
-    static mediaNotUploaded(message){
-        return new CustomErrorHandler(400,message);
+    static mediaNotUploaded(){
+        return new CustomErrorHandler(400,"Media not uploaded");
     }
 }
 export default CustomErrorHandler;
