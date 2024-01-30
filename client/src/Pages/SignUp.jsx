@@ -1,17 +1,20 @@
 import { useState } from "react";
 import HomeLayout from "../HomeLayout/HomeLayout";
 import { Link, useNavigate } from "react-router-dom";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { createAccount } from "../redux/slices/authSlice";
+import { BsPersonFill } from "react-icons/bs";
 function SignUp() {
-  const dispatch=useDispatch();
-  const navigate=useNavigate();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [previewImage, setPreviewImage] = useState("");
   const [signUpData, setSignUpData] = useState({
     fullName: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
+    avatar: "",
   });
   function handleUserInput(e) {
     const { name, value } = e.target;
@@ -20,8 +23,24 @@ function SignUp() {
       [name]: value,
     });
   }
-  async function createNewAccount(e) {
+  function getImage(e) {
     e.preventDefault();
+    const uploadedImage = e.target.files[0];
+    setSignUpData({
+      ...signUpData,
+      avatar:uploadedImage,
+    });
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(uploadedImage);
+    fileReader.addEventListener("load",function() {
+      setPreviewImage(this.result);
+    });
+    
+  }
+  async function createNewAccount(e) {
+    
+    e.preventDefault();
+    console.log(signUpData);
     if (
       !signUpData.fullName ||
       !signUpData.email ||
@@ -31,43 +50,53 @@ function SignUp() {
       toast.error("All fields are required");
       return;
     }
-    if(signUpData.fullName.length<5){
+    if (signUpData.fullName.length < 5) {
       toast.error("Full name should be greater than 5 characters");
       return;
     }
-    if(!signUpData.email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)){
+    if (
+      !signUpData.email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)
+    ) {
       toast.error("Email not valid");
       return;
     }
-    if(!signUpData.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/)){
-      toast.error("Password must be Minimum eight and maximum 10 characters, at least one uppercase letter, one lowercase letter, one number and one special character")
+    if (
+      !signUpData.password.match(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/
+      )
+    ) {
+      toast.error(
+        "Password must be Minimum eight and maximum 10 characters, at least one uppercase letter, one lowercase letter, one number and one special character"
+      );
       return;
     }
-    if(signUpData.password!=signUpData.confirmPassword){
+    if (signUpData.password != signUpData.confirmPassword) {
       toast.error("Password did not match");
       return;
     }
-    const formData=new FormData();
-    formData.append("fullName",signUpData.fullName);
-    formData.append("email",signUpData.email);
-    formData.append("password",signUpData.password);
-    formData.append("confirmPassword",signUpData.confirmPassword);
-    const response=await dispatch(createAccount(formData));
-    if(response?.payload?.success){
+    const formData = new FormData();
+    formData.append("fullName", signUpData.fullName);
+    formData.append("email", signUpData.email);
+    formData.append("password", signUpData.password);
+    formData.append("confirmPassword", signUpData.confirmPassword);
+    formData.append("avatar", signUpData.avatar);
+    const response = await dispatch(createAccount(formData));
+    if (response?.payload?.success) {
       setSignUpData({
         fullName: "",
         email: "",
         password: "",
         confirmPassword: "",
-      })
-      navigate('/login');
+        avatar: "",
+      });
+      setPreviewImage("");
+      navigate("/login");
     }
-
   }
   return (
     <HomeLayout>
-      <div className="h-[920px] flex items-center justify-center mt-[220px]">
-        <div className="h-[870px] w-[944px] bg-[#8000FF] rounded-xl">
+      <div className="h-fit flex items-center justify-center mt-[250px] mb-[20px]">
+        <div className="h-fit w-[944px] bg-[#8000FF] rounded-xl">
           <h1 className="text-[85px] font-bold text-center">
             Registration Form
           </h1>
@@ -76,6 +105,26 @@ function SignUp() {
             onSubmit={createNewAccount}
             className="flex gap-[10px] flex-col"
           >
+            <div>
+              <label htmlFor="avatar" className="cursor-pointer">
+                {previewImage ? (
+                  <img
+                    src={previewImage}
+                    className="rounded-full w-48 h-48 m-auto border-2"
+                  />
+                ) : (
+                  <BsPersonFill className="rounded-full w-48 h-48 m-auto text-white border-2 px-4" />
+                )}
+              </label>
+              <input
+                type="file"
+                name="avatar"
+                id="avatar"
+                className="hidden"
+                accept=".png,.jpg,.jpeg,.svg"
+                onChange={getImage}
+              />
+            </div>
             <div className="flex flex-col px-8">
               <label htmlFor="fullName" className="text-[36px] font-bold">
                 Full Name

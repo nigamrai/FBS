@@ -21,6 +21,21 @@ export const createAccount =createAsyncThunk('auth/signup',async(data)=>{
         toast.error(err?.response?.data?.message);
     }
 })
+export const loginUser=createAsyncThunk('auth/login',async(data)=>{
+    try{
+        const res=axiosInstance.post("/login",data);
+         toast.promise(res,{
+            loading:"Wait! logging in",
+            success:(data)=>{
+                return data?.data?.message
+        },
+        error:"Failed to login"
+    })
+    return (await res).data;
+    }catch(err){
+        toast.error(err?.response?.data?.message);
+    }
+})
 const authSlice=createSlice({
     name:'auth',
     initialState,

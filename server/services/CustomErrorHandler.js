@@ -10,5 +10,11 @@ class CustomErrorHandler extends Error{
     static mediaNotUploaded(){
         return new CustomErrorHandler(400,"Media not uploaded");
     }
+    static doesNotExist(message){
+        return new CustomErrorHandler(409,message);
+    }
+    static wrongCredentials(){
+        return new CustomErrorHandler(401,"Wrong password");
+    }
 }
 export default CustomErrorHandler;

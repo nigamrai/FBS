@@ -8,7 +8,7 @@ function HomeLayout({children}) {
   const role=useSelector((state)=>state?.auth?.role);
   return(
     <div className="min-h-[90vh] ">
-        <header className="h-[231px] bg-[#176629] px-[162px] py-4 fixed top-0">
+        <header className="h-[231px] bg-[#176629] px-[162px] py-4 fixed">
             <div className="flex gap-[26px] items-center">
               <img src={logo} alt="logo" className="w-[303px]"/>
               <div className="relative">
